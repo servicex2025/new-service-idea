@@ -1,0 +1,455 @@
+html<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>リモートワーク戦略提案</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'Hiragino Sans', 'Yu Gothic', sans-serif;
+            background: #f5f5f5;
+            overflow: hidden;
+        }
+
+        .slide-container {
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .slide {
+            width: 90vw;
+            height: 90vh;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            padding: 60px 80px;
+            display: none;
+            flex-direction: column;
+            position: relative;
+            border: 2px solid #333;
+        }
+
+        .slide.active {
+            display: flex;
+        }
+
+        .slide-header {
+            border-bottom: 3px solid #333;
+            padding-bottom: 20px;
+            margin-bottom: 40px;
+        }
+
+        h1 {
+            font-size: 3em;
+            color: #000;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+
+        h2 {
+            font-size: 2.5em;
+            color: #000;
+            font-weight: 700;
+            margin-bottom: 30px;
+            border-left: 6px solid #000;
+            padding-left: 20px;
+        }
+
+        h3 {
+            font-size: 1.8em;
+            color: #000;
+            font-weight: 600;
+            margin-bottom: 20px;
+            margin-top: 30px;
+        }
+
+        .subtitle {
+            font-size: 1.4em;
+            color: #555;
+            font-weight: 400;
+        }
+
+        .content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .content-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            margin-top: 20px;
+        }
+
+        .card {
+            background: #fff;
+            border: 2px solid #333;
+            border-radius: 8px;
+            padding: 30px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .card h3 {
+            margin-top: 0;
+            font-size: 1.6em;
+        }
+
+        .bullet-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .bullet-list li {
+            padding: 15px 0;
+            border-bottom: 1px solid #ddd;
+            font-size: 1.3em;
+            color: #333;
+            position: relative;
+            padding-left: 35px;
+        }
+
+        .bullet-list li:last-child {
+            border-bottom: none;
+        }
+
+        .bullet-list li:before {
+            content: "▶";
+            position: absolute;
+            left: 0;
+            color: #000;
+            font-size: 0.8em;
+        }
+
+        .highlight-box {
+            background: #f0f0f0;
+            border: 2px solid #333;
+            border-radius: 8px;
+            padding: 30px;
+            margin: 30px 0;
+            font-size: 1.4em;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .metric-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+            margin: 30px 0;
+        }
+
+        .metric-card {
+            background: #fff;
+            border: 2px solid #333;
+            border-radius: 8px;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .metric-value {
+            font-size: 3em;
+            font-weight: 700;
+            color: #000;
+            margin: 15px 0;
+        }
+
+        .metric-label {
+            font-size: 1.2em;
+            color: #555;
+        }
+
+        .navigation {
+            position: absolute;
+            bottom: 30px;
+            right: 40px;
+            display: flex;
+            gap: 15px;
+        }
+
+        .nav-button {
+            background: #333;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            font-size: 1.1em;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+        }
+
+        .nav-button:hover {
+            background: #555;
+            transform: translateY(-2px);
+        }
+
+        .nav-button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .slide-number {
+            position: absolute;
+            bottom: 30px;
+            left: 40px;
+            font-size: 1.1em;
+            color: #666;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="slide-container">
+        <div class="slide active">
+            <div class="content">
+                <h1>リモートワーク<br>戦略提案</h1>
+                <p class="subtitle">場所にとらわれない生産性の高い働き方を実現</p>
+                <div class="highlight-box" style="margin-top: 80px;">
+                    生産性20%向上、離職率50%削減を達成
+                </div>
+            </div>
+            <div class="slide-number">1 / 6</div>
+            <div class="navigation">
+                <button class="nav-button" onclick="prevSlide()" disabled>前へ</button>
+                <button class="nav-button" onclick="nextSlide()">次へ</button>
+            </div>
+        </div>
+
+        <div class="slide">
+            <div class="slide-header">
+                <h2>現状の課題</h2>
+            </div>
+            <div class="content">
+                <div class="content-grid">
+                    <div class="card">
+                        <h3>コミュニケーション</h3>
+                        <ul class="bullet-list">
+                            <li>情報共有の遅延</li>
+                            <li>チーム一体感の低下</li>
+                            <li>意思疎通の困難さ</li>
+                        </ul>
+                    </div>
+                    <div class="card">
+                        <h3>業務管理</h3>
+                        <ul class="bullet-list">
+                            <li>進捗把握が困難</li>
+                            <li>勤怠管理の課題</li>
+                            <li>セキュリティリスク</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="slide-number">2 / 6</div>
+            <div class="navigation">
+                <button class="nav-button" onclick="prevSlide()">前へ</button>
+                <button class="nav-button" onclick="nextSlide()">次へ</button>
+            </div>
+        </div>
+
+        <div class="slide">
+            <div class="slide-header">
+                <h2>リモートワーク推進施策</h2>
+            </div>
+            <div class="content">
+                <div class="content-grid">
+                    <div class="card">
+                        <h3>インフラ整備</h3>
+                        <ul class="bullet-list">
+                            <li>クラウドツール導入</li>
+                            <li>セキュリティ強化</li>
+                            <li>在宅勤務環境支援</li>
+                        </ul>
+                    </div>
+                    <div class="card">
+                        <h3>制度設計</h3>
+                        <ul class="bullet-list">
+                            <li>フレックスタイム制</li>
+                            <li>成果主義評価</li>
+                            <li>手当・補助制度</li>
+                        </ul>
+                    </div>
+                    <div class="card">
+                        <h3>コミュニケーション</h3>
+                        <ul class="bullet-list">
+                            <li>定例オンライン会議</li>
+                            <li>チャットツール活用</li>
+                            <li>バーチャルイベント</li>
+                        </ul>
+                    </div>
+                    <div class="card">
+                        <h3>マネジメント</h3>
+                        <ul class="bullet-list">
+                            <li>目標管理の明確化</li>
+                            <li>1on1の定期実施</li>
+                            <li>可視化ツール活用</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="slide-number">3 / 6</div>
+            <div class="navigation">
+                <button class="nav-button" onclick="prevSlide()">前へ</button>
+                <button class="nav-button" onclick="nextSlide()">次へ</button>
+            </div>
+        </div>
+
+        <div class="slide">
+            <div class="slide-header">
+                <h2>期待される効果</h2>
+            </div>
+            <div class="content">
+                <div class="metric-grid">
+                    <div class="metric-card">
+                        <div class="metric-label">生産性</div>
+                        <div class="metric-value">+20%</div>
+                        <div class="metric-label">向上</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">離職率</div>
+                        <div class="metric-value">-50%</div>
+                        <div class="metric-label">削減</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">オフィスコスト</div>
+                        <div class="metric-value">-30%</div>
+                        <div class="metric-label">削減</div>
+                    </div>
+                </div>
+                <div class="highlight-box" style="margin-top: 40px;">
+                    従業員満足度向上と優秀な人材の確保
+                </div>
+            </div>
+            <div class="slide-number">4 / 6</div>
+            <div class="navigation">
+                <button class="nav-button" onclick="prevSlide()">前へ</button>
+                <button class="nav-button" onclick="nextSlide()">次へ</button>
+            </div>
+        </div>
+
+        <div class="slide">
+            <div class="slide-header">
+                <h2>導入ツール</h2>
+            </div>
+            <div class="content">
+                <div class="content-grid">
+                    <div class="card">
+                        <h3>コミュニケーション</h3>
+                        <ul class="bullet-list">
+                            <li>Slack / Microsoft Teams</li>
+                            <li>Zoom / Google Meet</li>
+                            <li>Miro（ホワイトボード）</li>
+                        </ul>
+                    </div>
+                    <div class="card">
+                        <h3>プロジェクト管理</h3>
+                        <ul class="bullet-list">
+                            <li>Asana / Trello</li>
+                            <li>Notion（ドキュメント）</li>
+                            <li>GitHub（開発管理）</li>
+                        </ul>
+                    </div>
+                    <div class="card">
+                        <h3>セキュリティ</h3>
+                        <ul class="bullet-list">
+                            <li>VPN接続</li>
+                            <li>多要素認証</li>
+                            <li>クラウドストレージ</li>
+                        </ul>
+                    </div>
+                    <div class="card">
+                        <h3>勤怠・評価</h3>
+                        <ul class="bullet-list">
+                            <li>勤怠管理システム</li>
+                            <li>目標管理ツール</li>
+                            <li>エンゲージメント調査</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="slide-number">5 / 6</div>
+            <div class="navigation">
+                <button class="nav-button" onclick="prevSlide()">前へ</button>
+                <button class="nav-button" onclick="nextSlide()">次へ</button>
+            </div>
+        </div>
+
+        <div class="slide">
+            <div class="slide-header">
+                <h2>まとめ</h2>
+            </div>
+            <div class="content">
+                <div class="card" style="margin-bottom: 30px;">
+                    <h3>成功のポイント</h3>
+                    <ul class="bullet-list">
+                        <li>適切なツール選定と活用</li>
+                        <li>明確な評価基準の設定</li>
+                        <li>定期的なコミュニケーション</li>
+                        <li>セキュリティ対策の徹底</li>
+                    </ul>
+                </div>
+                <div class="highlight-box">
+                    リモートワークで<br>柔軟で生産性の高い組織へ
+                </div>
+            </div>
+            <div class="slide-number">6 / 6</div>
+            <div class="navigation">
+                <button class="nav-button" onclick="prevSlide()">前へ</button>
+                <button class="nav-button" onclick="nextSlide()" disabled>次へ</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+
+        function showSlide(index) {
+            slides.forEach((slide, i) => {
+                slide.classList.toggle('active', i === index);
+            });
+            
+            const prevButtons = document.querySelectorAll('.nav-button:first-child');
+            const nextButtons = document.querySelectorAll('.nav-button:last-child');
+            
+            prevButtons.forEach(btn => btn.disabled = index === 0);
+            nextButtons.forEach(btn => btn.disabled = index === slides.length - 1);
+        }
+
+        function nextSlide() {
+            if (currentSlide < slides.length - 1) {
+                currentSlide++;
+                showSlide(currentSlide);
+            }
+        }
+
+        function prevSlide() {
+            if (currentSlide > 0) {
+                currentSlide--;
+                showSlide(currentSlide);
+            }
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight') nextSlide();
+            if (e.key === 'ArrowLeft') prevSlide();
+        });
+    </script>
+</body>
+</html>
+【↑ ここまで】
+
+「Commit changes」をクリックして保存してください。
+完了したら教えてください！あと5個です！ 💪再試行Claudeは間違えることがあります。回答内容を必ずご確認ください。
