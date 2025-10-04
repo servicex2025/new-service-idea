@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>翻訳精度向上AI提案 - モノクロ版</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'Hiragino Sans', 'Yu Gothic', sans-serif;
+            background: #f5f5f5;
+            overflow: hidden;
+        }
+
+        .slide-container {
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .slide {
+            width: 90vw;
+            height: 90vh;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            padding: 60px 80px;
+            display: none;
+            flex-direction: column;
+            position: relative;
+            border: 2px solid #333;
+        }
+
+        .slide.active {
+            display: flex;
+        }
+
+        .slide-header {
+            border-bottom: 3px solid #333;
+            padding-bottom: 20px;
+            margin-bottom: 40px;
+        }
+
+        h1 {
+            font-size: 3em;
+            color: #000;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+
+        h2 {
+            font-size: 2.5em;
+            color: #000;
+            font-weight: 700;
+            margin-bottom: 30px;
+            border-left: 6px solid #000;
+            padding-left: 20px;
+        }
+
+        h3 {
+            font-size: 1.8em;
+            color: #000;
+            font-weight: 600;
+            margin-bottom: 20px;
+            margin-top: 30px;
+        }
+
+        .subtitle {
+            font-size: 1.4em;
+            color: #555;
+            font-weight: 400;
+        }
+
+        .content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .content-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            margin-top: 20px;
+        }
+
+        .card {
+            background: #fff;
+            border: 2px solid #333;
+            border-radius: 8px;
+            padding: 30px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .card h3 {
+            margin-top: 0;
+            font-size: 1.6em;
+        }
+
+        .bullet-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .bullet-list li {
+            padding: 15px 0;
+            border-bottom: 1px solid #ddd;
+            font-size: 1.3em;
+            color: #333;
+            position: relative;
+            padding-left: 35px;
+        }
+
+        .bullet-list li:last-child {
+            border-bottom: none;
+        }
+
+        .bullet-list li:before {
+            content: "▶";
+            position: absolute;
+            left: 0;
+            color: #000;
+            font-size: 0.8em;
+        }
+
+        .highlight-box {
+            background: #f0f0f0;
+            border: 2px solid #333;
+            border-radius: 8px;
+            padding: 30px;
+            margin: 30px 0;
+            font-size: 1.4em;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .flow-diagram {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin: 40px 0;
+        }
+
+        .flow-step {
+            flex: 1;
+            text-align: center;
+            padding: 25px;
+            background: #fff;
+            border: 2px solid #333;
+            border-radius: 8px;
+            font-size: 1.2em;
+            font-weight: 600;
+        }
+
+        .flow-arrow {
+            font-size: 2em;
+            color: #000;
+            margin: 0 20px;
+        }
+
+        .metric-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+            margin: 30px 0;
+        }
+
+        .metric-card {
+            background: #fff;
+            border: 2px solid #333;
+            border-radius: 8px;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .metric-value {
+            font-size: 3em;
+            font-weight: 700;
+            color: #000;
+            margin: 15px 0;
+        }
+
+        .metric-label {
+            font-size: 1.2em;
+            color: #555;
+        }
+
+        .navigation {
+            position: absolute;
+            bottom: 30px;
+            right: 40px;
+            display: flex;
+            gap: 15px;
+        }
+
+        .nav-button {
+            background: #333;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            font-size: 1.1em;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+        }
+
+        .nav-button:hover {
+            background: #555;
+            transform: translateY(-2px);
+        }
+
+        .nav-button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .slide-number {
+            position: absolute;
+            bottom: 30px;
+            left: 40px;
+            font-size: 1.1em;
+            color: #666;
+            font-weight: 600;
+        }
+
+        .timeline {
+            display: flex;
+            justify-content: space-between;
+            margin: 40px 0;
+            position: relative;
+        }
+
+        .timeline:before {
+            content: '';
+            position: absolute;
+            top: 25px;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: #333;
+        }
+
+        .timeline-item {
+            flex: 1;
+            text-align: center;
+            position: relative;
+        }
+
+        .timeline-dot {
+            width: 50px;
+            height: 50px;
+            background: #fff;
+            border: 3px solid #333;
+            border-radius: 50%;
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.2em;
+            position: relative;
+            z-index: 1;
+        }
+
+        .timeline-content {
+            padding: 15px;
+        }
+
+        .timeline-title {
+            font-weight: 700;
+            font-size: 1.3em;
+            margin-bottom: 10px;
+            color: #000;
+        }
+
+        .timeline-desc {
+            font-size: 1.1em;
+            color: #555;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 1.2em;
+        }
+
+        th, td {
+            padding: 18px;
+            text-align: left;
+            border: 2px solid #333;
+        }
+
+        th {
+            background: #333;
+            color: white;
+            font-weight: 700;
+        }
+
+        td {
+            background: white;
+        }
+
+        tr:nth-child(even) td {
+            background: #f9f9f9;
+        }
+    </style>
+</head>
+<body>
+    <div class="slide-container">
+        <div class="slide active">
+            <div class="content">
+                <h1>翻訳精度向上のための<br>AI技術活用提案</h1>
+                <p class="subtitle">大規模言語モデルを活用した翻訳品質改善戦略</p>
+                <div class="highlight-box" style="margin-top: 80px;">
+                    最新のAI技術で翻訳精度を飛躍的に向上
+                </div>
+            </div>
+            <div class="slide-number">1 / 7</div>
+            <div class="navigation">
+                <button class="nav-button" onclick="prevSlide()" disabled>前へ</button>
+                <button class="nav-button" onclick="nextSlide()">次へ</button>
+            </div>
+        </div>
+
+        <div class="slide">
+            <div class="slide-header">
+                <h2>現状の課題</h2>
+            </div>
+            <div class="content">
+                <div class="content-grid">
+                    <div class="card">
+                        <h3>翻訳品質の問題</h3>
+                        <ul class="bullet-list">
+                            <li>文脈に合わない訳語選択</li>
+                            <li>専門用語の誤訳</li>
+                            <li>ニュアンスの損失</li>
+                        </ul>
+                    </div>
+                    <div class="card">
+                        <h3>作業効率の課題</h3>
+                        <ul class="bullet-list">
+                            <li>手動修正の時間コスト</li>
+                            <li>品質チェックの負担</li>
+                            <li>一貫性の維持困難</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="slide-number">2 / 7</div>
+            <div class="navigation">
+                <button class="nav-button" onclick="prevSlide()">前へ</button>
+                <button class="nav-button" onclick="nextSlide()">次へ</button>
+            </div>
+        </div>
+
+        <div class="slide">
+            <div class="slide-header">
+                <h2>AI翻訳精度向上ソリューション</h2>
+            </div>
+            <div class="content">
+                <div class="flow-diagram">
+                    <div class="flow-step">原文入力</div>
+                    <div class="flow-arrow">→</div>
+                    <div class="flow-step">AI翻訳</div>
+                    <div class="flow-arrow">→</div>
+                    <div class="flow-step">AI精度向上</div>
+                    <div class="flow-arrow">→</div>
+                    <div class="flow-step">高品質な訳文</div>
+                </div>
+                <div class="card" style="margin-top: 40px;">
+                    <h3>主要機能</h3>
+                    <ul class="bullet-list">
+                        <li>文脈理解に基づく適切な訳語選択</li>
+                        <li>専門用語の正確な翻訳</li>
+                        <li>自然で読みやすい文章への最適化</li>
+                        <li>用語の一貫性確保</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="slide-number">3 / 7</div>
+            <div class="navigation">
+                <button class="nav-button" onclick="prevSlide()">前へ</button>
+                <button class="nav-button" onclick="nextSlide()">次へ</button>
+            </div>
+        </div>
+
+        <div class="slide">
+            <div class="slide-header">
+                <h2>期待される効果</h2>
+            </div>
+            <div class="content">
+                <div class="metric-grid">
+                    <div class="metric-card">
+                        <div class="metric-label">翻訳精度</div>
+                        <div class="metric-value">+40%</div>
+                        <div class="metric-label">向上</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">作業時間</div>
+                        <div class="metric-value">-60%</div>
+                        <div class="metric-label">削減</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">コスト</div>
+                        <div class="metric-value">-50%</div>
+                        <div class="metric-label">削減</div>
+                    </div>
+                </div>
+                <div class="highlight-box" style="margin-top: 40px;">
+                    高品質な翻訳を低コストで実現し、ビジネス拡大を加速
+                </div>
+            </div>
+            <div class="slide-number">4 / 7</div>
+            <div class="navigation">
+                <button class="nav-button" onclick="prevSlide()">前へ</button>
+                <button class="nav-button" onclick="nextSlide()">次へ</button>
+            </div>
+        </div>
+
+        <div class="slide">
+            <div class="slide-header">
+                <h2>実装ステップ</h2>
+            </div>
+            <div class="content">
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <div class="timeline-dot">1</div>
+                        <div class="timeline-content">
+                            <div class="timeline-title">要件定義</div>
+                            <div class="timeline-desc">2週間</div>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-dot">2</div>
+                        <div class="timeline-content">
+                            <div class="timeline-title">システム構築</div>
+                            <div class="timeline-desc">4週間</div>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-dot">3</div>
+                        <div class="timeline-content">
+                            <div class="timeline-title">テスト運用</div>
+                            <div class="timeline-desc">2週間</div>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-dot">4</div>
+                        <div class="timeline-content">
+                            <div class="timeline-title">本格運用</div>
+                            <div class="timeline-desc">開始</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="slide-number">5 / 7</div>
+            <div class="navigation">
+                <button class="nav-button" onclick="prevSlide()">前へ</button>
+                <button class="nav-button" onclick="nextSlide()">次へ</button>
+            </div>
+        </div>
+
+        <div class="slide">
+            <div class="slide-header">
+                <h2>投資対効果分析</h2>
+            </div>
+            <div class="content">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>項目</th>
+                            <th>導入前</th>
+                            <th>導入後</th>
+                            <th>改善効果</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>翻訳時間（1文書）</td>
+                            <td>8時間</td>
+                            <td>3時間</td>
+                            <td><strong>62.5%削減</strong></td>
+                        </tr>
+                        <tr>
+                            <td>修正作業時間</td>
+                            <td>4時間</td>
+                            <td>1時間</td>
+                            <td><strong>75%削減</strong></td>
+                        </tr>
+                        <tr>
+                            <td>月間コスト</td>
+                            <td>¥500,000</td>
+                            <td>¥250,000</td>
+                            <td><strong>¥250,000削減</strong></td>
+                        </tr>
+                        <tr>
+                            <td>品質スコア</td>
+                            <td>70点</td>
+                            <td>95点</td>
+                            <td><strong>+25点向上</strong></td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="highlight-box" style="margin-top: 30px;">
+                    投資回収期間：約6ヶ月
+                </div>
+            </div>
+            <div class="slide-number">6 / 7</div>
+            <div class="navigation">
+                <button class="nav-button" onclick="prevSlide()">前へ</button>
+                <button class="nav-button" onclick="nextSlide()">次へ</button>
+            </div>
+        </div>
+
+        <div class="slide">
+            <div class="slide-header">
+                <h2>まとめ</h2>
+            </div>
+            <div class="content">
+                <div class="card" style="margin-bottom: 30px;">
+                    <h3>提案のポイント</h3>
+                    <ul class="bullet-list">
+                        <li>最新AI技術による翻訳精度の大幅向上</li>
+                        <li>作業時間とコストの大幅削減</li>
+                        <li>短期間での投資回収が可能</li>
+                        <li>段階的な導入でリスクを最小化</li>
+                    </ul>
+                </div>
+                <div class="highlight-box">
+                    AI技術で翻訳業務を革新し、<br>ビジネスの競争力を強化
+                </div>
+            </div>
+            <div class="slide-number">7 / 7</div>
+            <div class="navigation">
+                <button class="nav-button" onclick="prevSlide()">前へ</button>
+                <button class="nav-button" onclick="nextSlide()" disabled>次へ</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+
+        function showSlide(index) {
+            slides.forEach((slide, i) => {
+                slide.classList.toggle('active', i === index);
+            });
+            
+            const prevButtons = document.querySelectorAll('.nav-button:first-child');
+            const nextButtons = document.querySelectorAll('.nav-button:last-child');
+            
+            prevButtons.forEach(btn => btn.disabled = index === 0);
+            nextButtons.forEach(btn => btn.disabled = index === slides.length - 1);
+        }
+
+        function nextSlide() {
+            if (currentSlide < slides.length - 1) {
+                currentSlide++;
+                showSlide(currentSlide);
+            }
+        }
+
+        function prevSlide() {
+            if (currentSlide > 0) {
+                currentSlide--;
+                showSlide(currentSlide);
+            }
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight') nextSlide();
+            if (e.key === 'ArrowLeft') prevSlide();
+        });
+    </script>
+</body>
+</html>
