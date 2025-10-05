@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>グローバル展開戦略提案</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'Hiragino Sans', 'Yu Gothic', sans-serif;
+            background: #f5f5f5;
+            overflow: hidden;
+        }
+
+        .slide-container {
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .slide {
+            width: 90vw;
+            height: 90vh;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            padding: 60px 80px;
+            display: none;
+            flex-direction: column;
+            position: relative;
+            border: 2px solid #333;
+        }
+
+        .slide.active {
+            display: flex;
+        }
+
+        .slide-header {
+            border-bottom: 3px solid #333;
+            padding-bottom: 20px;
+            margin-bottom: 40px;
+        }
+
+        h1 {
+            font-size: 3em;
+            color: #000;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+
+        h2 {
+            font-size: 2.5em;
+            color: #000;
+            font-weight: 700;
+            margin-bottom: 30px;
+            border-left: 6px solid #000;
+            padding-left: 20px;
+        }
+
+        h3 {
+            font-size: 1.8em;
+            color: #000;
+            font-weight: 600;
+            margin-bottom: 20px;
+            margin-top: 30px;
+        }
+
+        .subtitle {
+            font-size: 1.4em;
+            color: #555;
+            font-weight: 400;
+        }
+
+        .content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .content-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            margin-top: 20px;
+        }
+
+        .card {
+            background: #fff;
+            border: 2px solid #333;
+            border-radius: 8px;
+            padding: 30px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .card h3 {
+            margin-top: 0;
+            font-size: 1.6em;
+        }
+
+        .bullet-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .bullet-list li {
+            padding: 15px 0;
+            border-bottom: 1px solid #ddd;
+            font-size: 1.3em;
+            color: #333;
+            position: relative;
+            padding-left: 35px;
+        }
+
+        .bullet-list li:last-child {
+            border-bottom: none;
+        }
+
+        .bullet-list li:before {
+            content: "▶";
+            position: absolute;
+            left: 0;
+            color: #000;
+            font-size: 0.8em;
+        }
+
+        .highlight-box {
+            background: #f0f0f0;
+            border: 2px solid #333;
+            border-radius: 8px;
+            padding: 30px;
+            margin: 30px 0;
+            font-size: 1.4em;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .metric-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+            margin: 30px 0;
+        }
+
+        .metric-card {
+            background: #fff;
+            border: 2px solid #333;
+            border-radius: 8px;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .metric-value {
+            font-size: 3em;
+            font-weight: 700;
+            color: #000;
+            margin: 15px 0;
+        }
+
+        .metric-label {
+            font-size: 1.2em;
+            color: #555;
+        }
+
+        .navigation {
+            position: absolute;
+            bottom: 30px;
+            right: 40px;
+            display: flex;
+            gap: 15px;
+        }
+
+        .nav-button {
+            background: #333;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            font-size: 1.1em;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+        }
+
+        .nav-button:hover {
+            background: #555;
+            transform: translateY(-2px);
+        }
+
+        .nav-button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .slide-number {
+            position: absolute;
+            bottom: 30px;
+            left: 40px;
+            font-size: 1.1em;
+            color: #666;
+            font-weight: 600;
+        }
+
+        .timeline {
+            display: flex;
+            justify-content: space-between;
+            margin: 40px 0;
+            position: relative;
+        }
+
+        .timeline:before {
+            content: '';
+            position: absolute;
+            top: 25px;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: #333;
+        }
+
+        .timeline-item {
+            flex: 1;
+            text-align: center;
+            position: relative;
+        }
+
+        .timeline-dot {
+            width: 50px;
+            height: 50px;
+            background: #fff;
+            border: 3px solid #333;
+            border-radius: 50%;
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.2em;
+            position: relative;
+            z-index: 1;
+        }
+
+        .timeline-content {
+            padding: 15px;
+        }
+
+        .timeline-title {
+            font-weight: 700;
+            font-size: 1.3em;
+            margin-bottom: 10px;
+            color: #000;
+        }
+
+        .timeline-desc {
+            font-size: 1.1em;
+            color: #555;
+        }
+    </style>
+</head>
+<body>
+    <div class="slide-container">
+        <div class="slide active">
+            <div class="content">
+                <h1>グローバル展開<br>戦略提案</h1>
+                <p class="subtitle">海外市場進出で売上3倍、グローバル企業へ</p>
+                <div class="highlight-box" style="margin-top: 80px;">
+                    5年で海外売上比率50%を達成
+                </div>
+            </div>
+            <div class="slide-number">1 / 6</div>
+            <div class="navigation">
+                <button class="nav-button" onclick="prevSlide()" disabled>前へ</button>
+                <button class="nav-button" onclick="nextSlide()">次へ</button>
+            </div>
+        </div>
+
+        <div class="slide">
+            <div class="slide-header">
+                <h2>グローバル化の必要性</h2>
+            </div>
+            <div class="content">
+                <div class="content-grid">
+                    <div class="card">
+                        <h3>国内市場の限界</h3>
+                        <ul class="bullet-list">
+                            <li>人口減少による市場縮小</li>
+                            <li>競争激化と価格競争</li>
+                            <li>成長機会の限定</li>
+                        </ul>
+                    </div>
+                    <div class="card">
+                        <h3>海外市場の機会</h3>
+                        <ul class="bullet-list">
+                            <li>成長市場へのアクセス</li>
+                            <li>収益源の多様化</li>
+                            <li>グローバル人材の獲得</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="slide-number">2 / 6</div>
+            <div class="navigation">
+                <button class="nav-button" onclick="prevSlide()">前へ</button>
+                <button class="nav-button" onclick="nextSlide()">次へ</button>
+            </div>
+        </div>
+
+        <div class="slide">
+            <div class="slide-header">
+                <h2>展開ロードマップ</h2>
+            </div>
+            <div class="content">
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <div class="timeline-dot">1</div>
+                        <div class="timeline-content">
+                            <div class="timeline-title">市場調査</div>
+                            <div class="timeline-desc">ターゲット選定</div>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-dot">2</div>
+                        <div class="timeline-content">
+                            <div class="timeline-title">テスト進出</div>
+                            <div class="timeline-desc">パイロット展開</div>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-dot">3</div>
+                        <div class="timeline-content">
+                            <div class="timeline-title">本格展開</div>
+                            <div class="timeline-desc">拠点設立</div>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-dot">4</div>
+                        <div class="timeline-content">
+                            <div class="timeline-title">拡大</div>
+                            <div class="timeline-desc">多国展開</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card" style="margin-top: 40px;">
+                    <h3>重点地域</h3>
+                    <ul class="bullet-list">
+                        <li>東南アジア - 成長市場として優先</li>
+                        <li>北米 - 高付加価値市場への参入</li>
+                        <li>欧州 - ブランド確立</li>
+                        <li>中東・アフリカ - 将来の成長地域</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="slide-number">3 / 6</div>
+            <div class="navigation">
+                <button class="nav-button" onclick="prevSlide()">前へ</button>
+                <button class="nav-button" onclick="nextSlide()">次へ</button>
+            </div>
+        </div>
+
+        <div class="slide">
+            <div class="slide-header">
+                <h2>期待される成果</h2>
+            </div>
+            <div class="content">
+                <div class="metric-grid">
+                    <div class="metric-card">
+                        <div class="metric-label">海外売上比率</div>
+                        <div class="metric-value">50%</div>
+                        <div class="metric-label">5年後目標</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">進出国数</div>
+                        <div class="metric-value">10+</div>
+                        <div class="metric-label">カ国</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">売上成長</div>
+                        <div class="metric-value">×3</div>
+                        <div class="metric-label">倍増</div>
+                    </div>
+                </div>
+                <div class="highlight-box" style="margin-top: 40px;">
+                    グローバル市場で持続的成長を実現
+                </div>
+            </div>
+            <div class="slide-number">4 / 6</div>
+            <div class="navigation">
+                <button class="nav-button" onclick="prevSlide()">前へ</button>
+                <button class="nav-button" onclick="nextSlide()">次へ</button>
+            </div>
+        </div>
+
+        <div class="slide">
+            <div class="slide-header">
+                <h2>成功のための施策</h2>
+            </div>
+            <div class="content">
+                <div class="content-grid">
+                    <div class="card">
+                        <h3>現地化戦略</h3>
+                        <ul class="bullet-list">
+                            <li>製品・サービスのローカライズ</li>
+                            <li>現地パートナーとの提携</li>
+                            <li>文化・習慣への適応</li>
+                        </ul>
+                    </div>
+                    <div class="card">
+                        <h3>組織体制</h3>
+                        <ul class="bullet-list">
+                            <li>グローバル人材の採用</li>
+                            <li>海外拠点の設立</li>
+                            <li>本社との連携強化</li>
+                        </ul>
+                    </div>
+                    <div class="card">
+                        <h3>リスク管理</h3>
+                        <ul class="bullet-list">
+                            <li>為替リスクのヘッジ</li>
+                            <li>法規制への対応</li>
+                            <li>地政学リスクの監視</li>
+                        </ul>
+                    </div>
+                    <div class="card">
+                        <h3>ブランド戦略</h3>
+                        <ul class="bullet-list">
+                            <li>グローバルブランドの確立</li>
+                            <li>デジタルマーケティング</li>
+                            <li>現地メディア活用</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="slide-number">5 / 6</div>
+            <div class="navigation">
+                <button class="nav-button" onclick="prevSlide()">前へ</button>
+                <button class="nav-button" onclick="nextSlide()">次へ</button>
+            </div>
+        </div>
+
+        <div class="slide">
+            <div class="slide-header">
+                <h2>まとめ</h2>
+            </div>
+            <div class="content">
+                <div class="card" style="margin-bottom: 30px;">
+                    <h3>成功のポイント</h3>
+                    <ul class="bullet-list">
+                        <li>綿密な市場調査と戦略立案</li>
+                        <li>段階的かつ計画的な展開</li>
+                        <li>現地化と標準化のバランス</li>
+                        <li>長期的視点でのコミットメント</li>
+                    </ul>
+                </div>
+                <div class="highlight-box">
+                    グローバル展開で<br>真の成長企業へ
+                </div>
+            </div>
+            <div class="slide-number">6 / 6</div>
+            <div class="navigation">
+                <button class="nav-button" onclick="prevSlide()">前へ</button>
+                <button class="nav-button" onclick="nextSlide()" disabled>次へ</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+
+        function showSlide(index) {
+            slides.forEach((slide, i) => {
+                slide.classList.toggle('active', i === index);
+            });
+            
+            const prevButtons = document.querySelectorAll('.nav-button:first-child');
+            const nextButtons = document.querySelectorAll('.nav-button:last-child');
+            
+            prevButtons.forEach(btn => btn.disabled = index === 0);
+            nextButtons.forEach(btn => btn.disabled = index === slides.length - 1);
+        }
+
+        function nextSlide() {
+            if (currentSlide < slides.length - 1) {
+                currentSlide++;
+                showSlide(currentSlide);
+            }
+        }
+
+        function prevSlide() {
+            if (currentSlide > 0) {
+                currentSlide--;
+                showSlide(currentSlide);
+            }
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight') nextSlide();
+            if (e.key === 'ArrowLeft') prevSlide();
+        });
+    </script>
+</body>
+</html>
+【↑ ここまで】
+
+「Commit changes」をクリックして保存してください。
+完了したら教えてください！あと1個で完成です！ 🏁再試行Claudeは間違えることがあります。回答内容を必ずご確認ください。
