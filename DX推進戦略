@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DX推進戦略提案</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'Hiragino Sans', 'Yu Gothic', sans-serif;
+            background: #f5f5f5;
+            overflow: hidden;
+        }
+
+        .slide-container {
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .slide {
+            width: 90vw;
+            height: 90vh;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            padding: 60px 80px;
+            display: none;
+            flex-direction: column;
+            position: relative;
+            border: 2px solid #333;
+        }
+
+        .slide.active {
+            display: flex;
+        }
+
+        .slide-header {
+            border-bottom: 3px solid #333;
+            padding-bottom: 20px;
+            margin-bottom: 40px;
+        }
+
+        h1 {
+            font-size: 3em;
+            color: #000;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+
+        h2 {
+            font-size: 2.5em;
+            color: #000;
+            font-weight: 700;
+            margin-bottom: 30px;
+            border-left: 6px solid #000;
+            padding-left: 20px;
+        }
+
+        h3 {
+            font-size: 1.8em;
+            color: #000;
+            font-weight: 600;
+            margin-bottom: 20px;
+            margin-top: 30px;
+        }
+
+        .subtitle {
+            font-size: 1.4em;
+            color: #555;
+            font-weight: 400;
+        }
+
+        .content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .content-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            margin-top: 20px;
+        }
+
+        .card {
+            background: #fff;
+            border: 2px solid #333;
+            border-radius: 8px;
+            padding: 30px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .card h3 {
+            margin-top: 0;
+            font-size: 1.6em;
+        }
+
+        .bullet-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .bullet-list li {
+            padding: 15px 0;
+            border-bottom: 1px solid #ddd;
+            font-size: 1.3em;
+            color: #333;
+            position: relative;
+            padding-left: 35px;
+        }
+
+        .bullet-list li:last-child {
+            border-bottom: none;
+        }
+
+        .bullet-list li:before {
+            content: "▶";
+            position: absolute;
+            left: 0;
+            color: #000;
+            font-size: 0.8em;
+        }
+
+        .highlight-box {
+            background: #f0f0f0;
+            border: 2px solid #333;
+            border-radius: 8px;
+            padding: 30px;
+            margin: 30px 0;
+            font-size: 1.4em;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .metric-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+            margin: 30px 0;
+        }
+
+        .metric-card {
+            background: #fff;
+            border: 2px solid #333;
+            border-radius: 8px;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .metric-value {
+            font-size: 3em;
+            font-weight: 700;
+            color: #000;
+            margin: 15px 0;
+        }
+
+        .metric-label {
+            font-size: 1.2em;
+            color: #555;
+        }
+
+        .navigation {
+            position: absolute;
+            bottom: 30px;
+            right: 40px;
+            display: flex;
+            gap: 15px;
+        }
+
+        .nav-button {
+            background: #333;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            font-size: 1.1em;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+        }
+
+        .nav-button:hover {
+            background: #555;
+            transform: translateY(-2px);
+        }
+
+        .nav-button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .slide-number {
+            position: absolute;
+            bottom: 30px;
+            left: 40px;
+            font-size: 1.1em;
+            color: #666;
+            font-weight: 600;
+        }
+
+        .timeline {
+            display: flex;
+            justify-content: space-between;
+            margin: 40px 0;
+            position: relative;
+        }
+
+        .timeline:before {
+            content: '';
+            position: absolute;
+            top: 25px;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: #333;
+        }
+
+        .timeline-item {
+            flex: 1;
+            text-align: center;
+            position: relative;
+        }
+
+        .timeline-dot {
+            width: 50px;
+            height: 50px;
+            background: #fff;
+            border: 3px solid #333;
+            border-radius: 50%;
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.2em;
+            position: relative;
+            z-index: 1;
+        }
+
+        .timeline-content {
+            padding: 15px;
+        }
+
+        .timeline-title {
+            font-weight: 700;
+            font-size: 1.3em;
+            margin-bottom: 10px;
+            color: #000;
+        }
+
+        .timeline-desc {
+            font-size: 1.1em;
+            color: #555;
+        }
+    </style>
+</head>
+<body>
+    <div class="slide-container">
+        <div class="slide active">
+            <div class="content">
+                <h1>DX推進戦略提案</h1>
+                <p class="subtitle">デジタル技術で業務変革と競争力強化を実現</p>
+                <div class="highlight-box" style="margin-top: 80px;">
+                    業務効率50%向上、新規事業創出を加速
+                </div>
+            </div>
+            <div class="slide-number">1 / 6</div>
+            <div class="navigation">
+                <button class="nav-button" onclick="prevSlide()" disabled>前へ</button>
+                <button class="nav-button" onclick="nextSlide()">次へ</button>
+            </div>
+        </div>
+
+        <div class="slide">
+            <div class="slide-header">
+                <h2>DXの必要性</h2>
+            </div>
+            <div class="content">
+                <div class="content-grid">
+                    <div class="card">
+                        <h3>現状の課題</h3>
+                        <ul class="bullet-list">
+                            <li>レガシーシステムの限界</li>
+                            <li>業務の属人化</li>
+                            <li>デジタル競争力の低下</li>
+                        </ul>
+                    </div>
+                    <div class="card">
+                        <h3>市場環境の変化</h3>
+                        <ul class="bullet-list">
+                            <li>顧客行動のデジタル化</li>
+                            <li>競合のDX加速</li>
+                            <li>ビジネスモデルの変革</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="slide-number">2 / 6</div>
+            <div class="navigation">
+                <button class="nav-button" onclick="prevSlide()">前へ</button>
+                <button class="nav-button" onclick="nextSlide()">次へ</button>
+            </div>
+        </div>
+
+        <div class="slide">
+            <div class="slide-header">
+                <h2>DX推進ロードマップ</h2>
+            </div>
+            <div class="content">
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <div class="timeline-dot">1</div>
+                        <div class="timeline-content">
+                            <div class="timeline-title">デジタル化</div>
+                            <div class="timeline-desc">業務のIT化</div>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-dot">2</div>
+                        <div class="timeline-content">
+                            <div class="timeline-title">効率化</div>
+                            <div class="timeline-desc">プロセス最適化</div>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-dot">3</div>
+                        <div class="timeline-content">
+                            <div class="timeline-title">データ活用</div>
+                            <div class="timeline-desc">分析基盤構築</div>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-dot">4</div>
+                        <div class="timeline-content">
+                            <div class="timeline-title">事業変革</div>
+                            <div class="timeline-desc">新規価値創出</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card" style="margin-top: 40px;">
+                    <h3>主要施策</h3>
+                    <ul class="bullet-list">
+                        <li>クラウド移行 - システムの柔軟性向上</li>
+                        <li>業務自動化（RPA） - 定型業務の効率化</li>
+                        <li>AI/ML活用 - 意思決定の高度化</li>
+                        <li>デジタル人材育成 - 組織力強化</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="slide-number">3 / 6</div>
+            <div class="navigation">
+                <button class="nav-button" onclick="prevSlide()">前へ</button>
+                <button class="nav-button" onclick="nextSlide()">次へ</button>
+            </div>
+        </div>
+
+        <div class="slide">
+            <div class="slide-header">
+                <h2>期待される効果</h2>
+            </div>
+            <div class="content">
+                <div class="metric-grid">
+                    <div class="metric-card">
+                        <div class="metric-label">業務効率</div>
+                        <div class="metric-value">+50%</div>
+                        <div class="metric-label">向上</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">コスト</div>
+                        <div class="metric-value">-35%</div>
+                        <div class="metric-label">削減</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">顧客満足度</div>
+                        <div class="metric-value">+40%</div>
+                        <div class="metric-label">向上</div>
+                    </div>
+                </div>
+                <div class="highlight-box" style="margin-top: 40px;">
+                    デジタル技術で新たな価値を創造し、持続的成長を実現
+                </div>
+            </div>
+            <div class="slide-number">4 / 6</div>
+            <div class="navigation">
+                <button class="nav-button" onclick="prevSlide()">前へ</button>
+                <button class="nav-button" onclick="nextSlide()">次へ</button>
+            </div>
+        </div>
+
+        <div class="slide">
+            <div class="slide-header">
+                <h2>重点領域</h2>
+            </div>
+            <div class="content">
+                <div class="content-grid">
+                    <div class="card">
+                        <h3>業務プロセス改革</h3>
+                        <ul class="bullet-list">
+                            <li>ペーパーレス化</li>
+                            <li>承認フロー自動化</li>
+                            <li>リモート対応強化</li>
+                        </ul>
+                    </div>
+                    <div class="card">
+                        <h3>顧客体験向上</h3>
+                        <ul class="bullet-list">
+                            <li>オンライン接点拡大</li>
+                            <li>パーソナライゼーション</li>
+                            <li>カスタマーポータル</li>
+                        </ul>
+                    </div>
+                    <div class="card">
+                        <h3>データドリブン経営</h3>
+                        <ul class="bullet-list">
+                            <li>リアルタイム分析</li>
+                            <li>予測モデル構築</li>
+                            <li>KPI可視化</li>
+                        </ul>
+                    </div>
+                    <div class="card">
+                        <h3>新規事業開発</h3>
+                        <ul class="bullet-list">
+                            <li>デジタルサービス化</li>
+                            <li>プラットフォーム構築</li>
+                            <li>エコシステム形成</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="slide-number">5 / 6</div>
+            <div class="navigation">
+                <button class="nav-button" onclick="prevSlide()">前へ</button>
+                <button class="nav-button" onclick="nextSlide()">次へ</button>
+            </div>
+        </div>
+
+        <div class="slide">
+            <div class="slide-header">
+                <h2>まとめ</h2>
+            </div>
+            <div class="content">
+                <div class="card" style="margin-bottom: 30px;">
+                    <h3>成功のポイント</h3>
+                    <ul class="bullet-list">
+                        <li>経営層のコミットメント</li>
+                        <li>段階的な推進アプローチ</li>
+                        <li>人材育成への投資</li>
+                        <li>継続的な改善文化の醸成</li>
+                    </ul>
+                </div>
+                <div class="highlight-box">
+                    DX推進で<br>デジタル時代の競争優位を確立
+                </div>
+            </div>
+            <div class="slide-number">6 / 6</div>
+            <div class="navigation">
+                <button class="nav-button" onclick="prevSlide()">前へ</button>
+                <button class="nav-button" onclick="nextSlide()" disabled>次へ</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+
+        function showSlide(index) {
+            slides.forEach((slide, i) => {
+                slide.classList.toggle('active', i === index);
+            });
+            
+            const prevButtons = document.querySelectorAll('.nav-button:first-child');
+            const nextButtons = document.querySelectorAll('.nav-button:last-child');
+            
+            prevButtons.forEach(btn => btn.disabled = index === 0);
+            nextButtons.forEach(btn => btn.disabled = index === slides.length - 1);
+        }
+
+        function nextSlide() {
+            if (currentSlide < slides.length - 1) {
+                currentSlide++;
+                showSlide(currentSlide);
+            }
+        }
+
+        function prevSlide() {
+            if (currentSlide > 0) {
+                currentSlide--;
+                showSlide(currentSlide);
+            }
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight') nextSlide();
+            if (e.key === 'ArrowLeft') prevSlide();
+        });
+    </script>
+</body>
+</html>
