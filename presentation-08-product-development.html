@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>新規事業開発戦略提案</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'Hiragino Sans', 'Yu Gothic', sans-serif;
+            background: #f5f5f5;
+            overflow: hidden;
+        }
+
+        .slide-container {
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .slide {
+            width: 90vw;
+            height: 90vh;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            padding: 60px 80px;
+            display: none;
+            flex-direction: column;
+            position: relative;
+            border: 2px solid #333;
+        }
+
+        .slide.active {
+            display: flex;
+        }
+
+        .slide-header {
+            border-bottom: 3px solid #333;
+            padding-bottom: 20px;
+            margin-bottom: 40px;
+        }
+
+        h1 {
+            font-size: 3em;
+            color: #000;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+
+        h2 {
+            font-size: 2.5em;
+            color: #000;
+            font-weight: 700;
+            margin-bottom: 30px;
+            border-left: 6px solid #000;
+            padding-left: 20px;
+        }
+
+        h3 {
+            font-size: 1.8em;
+            color: #000;
+            font-weight: 600;
+            margin-bottom: 20px;
+            margin-top: 30px;
+        }
+
+        .subtitle {
+            font-size: 1.4em;
+            color: #555;
+            font-weight: 400;
+        }
+
+        .content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .content-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            margin-top: 20px;
+        }
+
+        .card {
+            background: #fff;
+            border: 2px solid #333;
+            border-radius: 8px;
+            padding: 30px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .card h3 {
+            margin-top: 0;
+            font-size: 1.6em;
+        }
+
+        .bullet-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .bullet-list li {
+            padding: 15px 0;
+            border-bottom: 1px solid #ddd;
+            font-size: 1.3em;
+            color: #333;
+            position: relative;
+            padding-left: 35px;
+        }
+
+        .bullet-list li:last-child {
+            border-bottom: none;
+        }
+
+        .bullet-list li:before {
+            content: "▶";
+            position: absolute;
+            left: 0;
+            color: #000;
+            font-size: 0.8em;
+        }
+
+        .highlight-box {
+            background: #f0f0f0;
+            border: 2px solid #333;
+            border-radius: 8px;
+            padding: 30px;
+            margin: 30px 0;
+            font-size: 1.4em;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .metric-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+            margin: 30px 0;
+        }
+
+        .metric-card {
+            background: #fff;
+            border: 2px solid #333;
+            border-radius: 8px;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .metric-value {
+            font-size: 3em;
+            font-weight: 700;
+            color: #000;
+            margin: 15px 0;
+        }
+
+        .metric-label {
+            font-size: 1.2em;
+            color: #555;
+        }
+
+        .navigation {
+            position: absolute;
+            bottom: 30px;
+            right: 40px;
+            display: flex;
+            gap: 15px;
+        }
+
+        .nav-button {
+            background: #333;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            font-size: 1.1em;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+        }
+
+        .nav-button:hover {
+            background: #555;
+            transform: translateY(-2px);
+        }
+
+        .nav-button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .slide-number {
+            position: absolute;
+            bottom: 30px;
+            left: 40px;
+            font-size: 1.1em;
+            color: #666;
+            font-weight: 600;
+        }
+
+        .timeline {
+            display: flex;
+            justify-content: space-between;
+            margin: 40px 0;
+            position: relative;
+        }
+
+        .timeline:before {
+            content: '';
+            position: absolute;
+            top: 25px;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: #333;
+        }
+
+        .timeline-item {
+            flex: 1;
+            text-align: center;
+            position: relative;
+        }
+
+        .timeline-dot {
+            width: 50px;
+            height: 50px;
+            background: #fff;
+            border: 3px solid #333;
+            border-radius: 50%;
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.2em;
+            position: relative;
+            z-index: 1;
+        }
+
+        .timeline-content {
+            padding: 15px;
+        }
+
+        .timeline-title {
+            font-weight: 700;
+            font-size: 1.3em;
+            margin-bottom: 10px;
+            color: #000;
+        }
+
+        .timeline-desc {
+            font-size: 1.1em;
+            color: #555;
+        }
+    </style>
+</head>
+<body>
+    <div class="slide-container">
+        <div class="slide active">
+            <div class="content">
+                <h1>新規事業開発<br>戦略提案</h1>
+                <p class="subtitle">イノベーションで新たな成長エンジンを創出</p>
+                <div class="highlight-box" style="margin-top: 80px;">
+                    3年で売上100億円規模の新規事業を立ち上げ
+                </div>
+            </div>
+            <div class="slide-number">1 / 6</div>
+            <div class="navigation">
+                <button class="nav-button" onclick="prevSlide()" disabled>前へ</button>
+                <button class="nav-button" onclick="nextSlide()">次へ</button>
+            </div>
+        </div>
+
+        <div class="slide">
+            <div class="slide-header">
+                <h2>新規事業の必要性</h2>
+            </div>
+            <div class="content">
+                <div class="content-grid">
+                    <div class="card">
+                        <h3>既存事業の課題</h3>
+                        <ul class="bullet-list">
+                            <li>市場の成熟化</li>
+                            <li>競争激化による利益率低下</li>
+                            <li>成長鈍化のリスク</li>
+                        </ul>
+                    </div>
+                    <div class="card">
+                        <h3>新規事業の機会</h3>
+                        <ul class="bullet-list">
+                            <li>技術革新の加速</li>
+                            <li>顧客ニーズの多様化</li>
+                            <li>新市場の創出可能性</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="slide-number">2 / 6</div>
+            <div class="navigation">
+                <button class="nav-button" onclick="prevSlide()">前へ</button>
+                <button class="nav-button" onclick="nextSlide()">次へ</button>
+            </div>
+        </div>
+
+        <div class="slide">
+            <div class="slide-header">
+                <h2>事業開発プロセス</h2>
+            </div>
+            <div class="content">
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <div class="timeline-dot">1</div>
+                        <div class="timeline-content">
+                            <div class="timeline-title">アイデア創出</div>
+                            <div class="timeline-desc">市場調査・分析</div>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-dot">2</div>
+                        <div class="timeline-content">
+                            <div class="timeline-title">検証</div>
+                            <div class="timeline-desc">MVP開発・テスト</div>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-dot">3</div>
+                        <div class="timeline-content">
+                            <div class="timeline-title">構築</div>
+                            <div class="timeline-desc">本格開発・投資</div>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-dot">4</div>
+                        <div class="timeline-content">
+                            <div class="timeline-title">拡大</div>
+                            <div class="timeline-desc">スケーリング</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card" style="margin-top: 40px;">
+                    <h3>成功の原則</h3>
+                    <ul class="bullet-list">
+                        <li>顧客課題の深い理解</li>
+                        <li>小さく始めて素早く学習</li>
+                        <li>データドリブンな意思決定</li>
+                        <li>専任チームの組成</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="slide-number">3 / 6</div>
+            <div class="navigation">
+                <button class="nav-button" onclick="prevSlide()">前へ</button>
+                <button class="nav-button" onclick="nextSlide()">次へ</button>
+            </div>
+        </div>
+
+        <div class="slide">
+            <div class="slide-header">
+                <h2>期待される成果</h2>
+            </div>
+            <div class="content">
+                <div class="metric-grid">
+                    <div class="metric-card">
+                        <div class="metric-label">3年後売上</div>
+                        <div class="metric-value">100億円</div>
+                        <div class="metric-label">目標</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">事業数</div>
+                        <div class="metric-value">3-5</div>
+                        <div class="metric-label">新規立ち上げ</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">成長率</div>
+                        <div class="metric-value">年50%</div>
+                        <div class="metric-label">以上</div>
+                    </div>
+                </div>
+                <div class="highlight-box" style="margin-top: 40px;">
+                    新規事業で次世代の成長基盤を確立
+                </div>
+            </div>
+            <div class="slide-number">4 / 6</div>
+            <div class="navigation">
+                <button class="nav-button" onclick="prevSlide()">前へ</button>
+                <button class="nav-button" onclick="nextSlide()">次へ</button>
+            </div>
+        </div>
+
+        <div class="slide">
+            <div class="slide-header">
+                <h2>重点領域</h2>
+            </div>
+            <div class="content">
+                <div class="content-grid">
+                    <div class="card">
+                        <h3>デジタルサービス</h3>
+                        <ul class="bullet-list">
+                            <li>SaaSプラットフォーム</li>
+                            <li>サブスクリプションモデル</li>
+                            <li>データ活用サービス</li>
+                        </ul>
+                    </div>
+                    <div class="card">
+                        <h3>グリーンテック</h3>
+                        <ul class="bullet-list">
+                            <li>再生可能エネルギー</li>
+                            <li>カーボンクレジット</li>
+                            <li>環境ソリューション</li>
+                        </ul>
+                    </div>
+                    <div class="card">
+                        <h3>ヘルステック</h3>
+                        <ul class="bullet-list">
+                            <li>遠隔医療サービス</li>
+                            <li>健康管理アプリ</li>
+                            <li>予防医療ソリューション</li>
+                        </ul>
+                    </div>
+                    <div class="card">
+                        <h3>FinTech</h3>
+                        <ul class="bullet-list">
+                            <li>決済プラットフォーム</li>
+                            <li>デジタル金融商品</li>
+                            <li>与信・融資サービス</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="slide-number">5 / 6</div>
+            <div class="navigation">
+                <button class="nav-button" onclick="prevSlide()">前へ</button>
+                <button class="nav-button" onclick="nextSlide()">次へ</button>
+            </div>
+        </div>
+
+        <div class="slide">
+            <div class="slide-header">
+                <h2>まとめ</h2>
+            </div>
+            <div class="content">
+                <div class="card" style="margin-bottom: 30px;">
+                    <h3>成功のポイント</h3>
+                    <ul class="bullet-list">
+                        <li>経営層の強いコミットメント</li>
+                        <li>失敗を許容する文化</li>
+                        <li>スピード重視の意思決定</li>
+                        <li>外部リソースの積極活用</li>
+                    </ul>
+                </div>
+                <div class="highlight-box">
+                    新規事業開発で<br>持続的成長を実現
+                </div>
+            </div>
+            <div class="slide-number">6 / 6</div>
+            <div class="navigation">
+                <button class="nav-button" onclick="prevSlide()">前へ</button>
+                <button class="nav-button" onclick="nextSlide()" disabled>次へ</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+
+        function showSlide(index) {
+            slides.forEach((slide, i) => {
+                slide.classList.toggle('active', i === index);
+            });
+            
+            const prevButtons = document.querySelectorAll('.nav-button:first-child');
+            const nextButtons = document.querySelectorAll('.nav-button:last-child');
+            
+            prevButtons.forEach(btn => btn.disabled = index === 0);
+            nextButtons.forEach(btn => btn.disabled = index === slides.length - 1);
+        }
+
+        function nextSlide() {
+            if (currentSlide < slides.length - 1) {
+                currentSlide++;
+                showSlide(currentSlide);
+            }
+        }
+
+        function prevSlide() {
+            if (currentSlide > 0) {
+                currentSlide--;
+                showSlide(currentSlide);
+            }
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight') nextSlide();
+            if (e.key === 'ArrowLeft') prevSlide();
+        });
+    </script>
+</body>
+</html>
